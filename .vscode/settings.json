@@ -1,0 +1,4 @@
+{
+    "makefile.configureOnOpen": false,
+    "solidity.remappingsUnix": ["@openzeppelin/=node_modules/@openzeppelin/"]
+}
