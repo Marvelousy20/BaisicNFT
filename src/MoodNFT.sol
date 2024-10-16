@@ -3,7 +3,9 @@ pragma solidity ^0.8.18;
 import {ERC721} from "@Openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {Base64} from "@Openzeppelin/contracts/utils/Base64.sol";
 
-contract MoonNft is ERC721 {
+contract MoodNft is ERC721 {
+    error MoodNft__NotOwner();
+
     enum Mood {
         HAPPY,
         SAD
@@ -28,12 +30,23 @@ contract MoonNft is ERC721 {
         return "data:application/json;base64,";
     }
 
-    function mintNft(string memory tokenUri) public {
-        s_tokenIdToUri[s_tokenCounter] = tokenUri;
-
+    function mintNft() public {
         s_tokenIdToMood[s_tokenCounter] = Mood.HAPPY;
         _safeMint(msg.sender, s_tokenCounter);
         s_tokenCounter++;
+    }
+
+    function flipMood(uint256 tokenId) public {
+        // Ensures only owner of nft can flip token/nft.
+        if (!_isApprovedOrOwner == msg.sender) {
+            revert MoodNft__NotOwner();
+        }
+
+        if (s_tokenIdToMood[tokenId] == Mood.HAPPY) {
+            s_tokenIdToMood[tokenId] == Mood.SAD;
+        } else {
+            s_tokenIdToMood[tokenId] == Mood.HAPPY;
+        }
     }
 
     function tokenURI(
@@ -49,6 +62,7 @@ contract MoonNft is ERC721 {
 
         // we need a link string, hence why we use abi.encode() instead of string.concat.
         // The Base64.encode(data) takes bytes data as argument, hence reason for converting to bytes;
+        // The first abi.encodePacked() is to concatinate the baseUri and the base64 string;
 
         return
             string(
@@ -67,5 +81,10 @@ contract MoonNft is ERC721 {
                     )
                 )
             );
+    }
+
+    // Getter functions
+    function getNFTMood(uint256 tokenId) public view returns (Mood) {
+        return s_tokenIdToMood[tokenId];
     }
 }
