@@ -20,7 +20,7 @@ contract MoodNft is ERC721 {
     constructor(
         string memory sadSvgImageUri,
         string memory happySvgImageUri
-    ) ERC721("Moon NFT", "MN") {
+    ) ERC721("Mood NFT", "MN") {
         s_tokenCounter = 0;
         s_sadSvgImageUri = sadSvgImageUri;
         s_happySvgImageUri = happySvgImageUri;
@@ -38,14 +38,18 @@ contract MoodNft is ERC721 {
 
     function flipMood(uint256 tokenId) public {
         // Ensures only owner of nft can flip token/nft.
-        if (!_isApprovedOrOwner == msg.sender) {
+        // if (!_isApprovedOrOwner == msg.sender) {
+        //     revert MoodNft__NotOwner();
+        // }
+
+        if (!_isAuthorized(_ownerOf(tokenId), msg.sender, tokenId)) {
             revert MoodNft__NotOwner();
         }
 
         if (s_tokenIdToMood[tokenId] == Mood.HAPPY) {
-            s_tokenIdToMood[tokenId] == Mood.SAD;
+            s_tokenIdToMood[tokenId] = Mood.SAD;
         } else {
-            s_tokenIdToMood[tokenId] == Mood.HAPPY;
+            s_tokenIdToMood[tokenId] = Mood.HAPPY;
         }
     }
 
